@@ -1,30 +1,69 @@
-# README
+![](.readme/rails.png)
 
-Initially this was just a project to test some stuff out, ended up being a whole devops overhaul on some very old and outdated articles about Ruby on Rails as it is clearly not as popular as it once was.
+#### → Getting started with this project
+
+This uses `docker-compose` for simplicity of getting together a Ruby on Rails 6 application with a PostgreSQL database.
+
+**Start containers**
+
+```bash
+docker-compose up -d
+```
+
+**Restart Ruby instance**
+
+```bash
+docker-compose restart web
+```
+
+**Destroy PostgreSQL databases if you mess up or similar reason**
+
+This nukes the `PGDATA` contents including databases, passwords et al.
+
+Useful if you are testing migrations or are prototyping your database model.
+
+```bash
+rm -rf ./tmp/db/* && docker-compose up --force-recreate postgres
+```
+
+**Stop containers**
+
+```bash
+docker-compose stop
+```
 
 ---
 
-#### Suggested README to fill out.
+#### → Start Developing
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+It is required to create the databases using Rails.
 
-Things you may want to cover:
+It is recommended to use migration files over any sort of hacks.
 
-* Ruby version
+It is recommended to have seed data to test your models too.
 
-* System dependencies
+- **How to interact with the Rails docker instance**
 
-* Configuration
+  ```bash
+  docker-compose exec web /bin/bash
+  ```
+  
+  **These commands will be essential**
+  
+  - `rails db:create`
+  - `rails db:migrate`
+  - `rails db:seed`
+  
+---
 
-* Database creation
+###### Technical Info
 
-* Database initialization
+**Rails version:** 6.1
 
-* How to run the test suite
+**Ruby version:** ruby 2.7.2
 
-* Services (job queues, cache servers, search engines, etc.)
+**Base Linux distro:** Debian Buster
 
-* Deployment instructions
+###### Default settings
 
-* ...
+**PostgreSQL User**: `root` **PostgreSQL Password**: `password`
