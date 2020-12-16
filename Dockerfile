@@ -8,27 +8,42 @@ COPY Gemfile /app/Gemfile
 COPY Gemfile.lock /app/Gemfile.lock
 
 # Install required dependencies.
-RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
-RUN apt install -y build-essential curl nodejs
-RUN apt install -y gawk autoconf automake bison libffi-dev libgdbm-dev libncurses5-dev libsqlite3-dev libtool libyaml-dev pkg-config sqlite3 zlib1g-dev libgmp-dev libreadline-dev libssl-dev
-
-# Debug...
-RUN ruby -v
-
-# Install rails.
-RUN gem install rails -v 6.1.0
+RUN apt-get update -qq
+RUN apt-get install -y build-essential \
+    nodejs \
+    postgresql-client \
+    curl \
+    nodejs \
+    gawk \
+    autoconf \
+    automake \
+    bison \
+    libffi-dev \
+    libgdbm-dev \
+    libncurses5-dev \
+    libsqlite3-dev \
+    libtool \
+    libyaml-dev \
+    pkg-config \
+    sqlite3 \
+    zlib1g-dev \
+    libgmp-dev \
+    libreadline-dev \
+    libssl-dev
 
 # Install Bundler fixed to 2.2.1
 # Apparently it can mimick projects that need bundler v1.
 # @see https://bundler.io/blog/2019/01/04/an-update-on-the-bundler-2-release.html
 RUN gem install bundler:2.2.1
 
+# Install rails.
+RUN gem install rails -v 6.1.0
+
+# Debug...
+RUN ruby -v
+
 # Install from Gemfile.
 RUN bundle install
-RUN bundle update
-
-# Dunno what version it is.
-RUN bundle update --bundler
 
 # Copy the project files to /app in the container.
 COPY . /app/
