@@ -31,16 +31,21 @@ RUN apt-get install -y build-essential \
     libreadline-dev \
     libssl-dev
 
-# Install Bundler fixed to 2.2.1
-# Apparently it can mimick projects that need bundler v1.
-# @see https://bundler.io/blog/2019/01/04/an-update-on-the-bundler-2-release.html
-RUN gem install bundler:2.2.1
+# Developers are ultimately gonna install these anyway.
+RUN apt-get install -y nano \
+    vim \
+    wget
 
 # Install rails.
 RUN gem install rails -v 6.1.0
 
 # Debug...
 RUN ruby -v
+
+# Install Bundler fixed to 2.2.1
+# Apparently it can mimick projects that need bundler v1.
+# @see https://bundler.io/blog/2019/01/04/an-update-on-the-bundler-2-release.html
+RUN gem install bundler:2.2.1
 
 # Install from Gemfile.
 RUN bundle install
@@ -53,7 +58,7 @@ COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 
-# Expose Rails on 3000.
+# Expose Rails on port 3000.
 EXPOSE 3000
 
 # Start the main process.
