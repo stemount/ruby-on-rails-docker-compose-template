@@ -1,4 +1,4 @@
-FROM ruby:2.7-buster
+FROM ruby:2.7-alpine
 
 # chroot to /app in the container.
 WORKDIR /app
@@ -7,10 +7,14 @@ WORKDIR /app
 COPY Gemfile /app/Gemfile
 COPY Gemfile.lock /app/Gemfile.lock
 
+RUN cat /etc/alpine-release
+
 # Install required dependencies.
-RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
-RUN apt install -y build-essential curl nodejs
-RUN apt install -y gawk autoconf automake bison libffi-dev libgdbm-dev libncurses5-dev libsqlite3-dev libtool libyaml-dev pkg-config sqlite3 zlib1g-dev libgmp-dev libreadline-dev libssl-dev
+RUN echo 'https://dl-cdn.alpinelinux.org/alpine/latest-stable/main' >> /etc/apk/repositories
+RUN echo 'https://dl-cdn.alpinelinux.org/alpine/latest-stable/community' >> /etc/apk/repositories
+
+RUN apk add --update --no-cache curl jq py3-configobj py3-pip py3-setuptools python3 python3-dev
+RUN apk add --update --no-cache nodejs postgresql-client curl nodejs gawk autoconf automake bison libffi-dev gbdm libncurses5-dev libsqlite3-dev libtool libyaml-dev pkg-config sqlite3 zlib1g-dev libgmp-dev libreadline-dev libssl-dev
 
 # Debug...
 RUN ruby -v
