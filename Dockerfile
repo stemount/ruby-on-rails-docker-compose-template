@@ -1,6 +1,8 @@
 ARG BASE_LINUX_IMAGE=3-buster
 FROM ruby:${BASE_LINUX_IMAGE}
 
+SHELL [ "/bin/bash", "-l", "-c" ]
+
 WORKDIR /app
 
 # # We need the Gemfile quite early.
@@ -35,14 +37,17 @@ RUN apt-get install -y -q --no-install-recommends build-essential \
     net-tools \
     dnsutils
 
-SHELL [ "/bin/bash", "-l", "-c" ]
-
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-RUN source /root/.bashrc && nvm install --lts && nvm use --lts && nvm alias default $(node -v)
-
-# Install Node.js dependencies for Sass.
-RUN npm install -g npm@latest
-RUN npm install -g sass@latest
+# Allow installing without installing NodeJS.
+ARG INSTALL_NODE=false
+RUN if [ ${INSTALL_NODE} = true ]; then \
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash \
+    source /root/.bashrc && \
+    nvm install --lts && \
+    nvm use --lts && \
+    nvm alias default $(node -v) && \
+    npm install -g npm@latest && \
+    npm install -g sass@latest \
+    ;fi
 
 # Install/Update from Gemfile.
 RUN bundle install

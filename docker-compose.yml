@@ -36,4 +36,4 @@ services:
       # Optimise Base Image
       BASE_LINUX_IMAGE: 3-buster
       # Node.js is required as Sass is preferred to be installed here over the Sass rubygem.
-      NODE_VERSION: 16.3.0
+      INSTALL_NODE: "false"
