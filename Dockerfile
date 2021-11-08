@@ -1,19 +1,19 @@
-FROM ruby:2.7-buster
+ARG BASE_LINUX_IMAGE=3-buster
+FROM ruby:${BASE_LINUX_IMAGE}
 
-# chroot to /app in the container.
 WORKDIR /app
 
-# We need the Gemfile quite early.
+# # We need the Gemfile quite early.
 COPY Gemfile /app/Gemfile
 COPY Gemfile.lock /app/Gemfile.lock
 
-# Install required dependencies.
-RUN apt-get update -qq
-RUN apt-get install -y build-essential \
-    nodejs \
+# Set debconf to run non-interactively
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
+RUN apt-get update -y --fix-missing
+RUN apt-get install -y -q --no-install-recommends build-essential \
     postgresql-client \
     curl \
-    nodejs \
     gawk \
     autoconf \
     automake \
@@ -29,28 +29,25 @@ RUN apt-get install -y build-essential \
     zlib1g-dev \
     libgmp-dev \
     libreadline-dev \
-    libssl-dev
-
-# Developers are ultimately gonna install these anyway.
-RUN apt-get install -y nano \
+    libssl-dev \
     vim \
-    wget
+    wget \
+    net-tools \
+    dnsutils
 
-# Install rails.
-RUN gem install rails -v 6.1.0
+SHELL [ "/bin/bash", "-l", "-c" ]
 
-# Debug...
-RUN ruby -v
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+RUN source /root/.bashrc && nvm install --lts && nvm use --lts && nvm alias default $(node -v)
 
-# Install Bundler fixed to 2.2.1
-# Apparently it can mimick projects that need bundler v1.
-# @see https://bundler.io/blog/2019/01/04/an-update-on-the-bundler-2-release.html
-RUN gem install bundler:2.2.1
+# Install Node.js dependencies for Sass.
+RUN npm install -g npm@latest
+RUN npm install -g sass@latest
 
-# Install from Gemfile.
+# Install/Update from Gemfile.
 RUN bundle install
 
-# Copy the project files to /app in the container.
+# # Copy the project files to /app in the container.
 COPY . /app/
 
 # Add a script to be executed every time the container starts.
