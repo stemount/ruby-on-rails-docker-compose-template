@@ -34,5 +34,9 @@ tasks:
         libncurses5-dev libsqlite3-dev libtool libyaml-dev make pkg-config \
         sqlite3 zlib1g-dev libgmp-dev libreadline-dev libssl-dev &&
       curl -sSL https://get.rvm.io | bash -s stable --rails &&
-      rvm get stable --auto-dotfiles
-    command: ruby -v
+      rvm reinstall 3.0.3 &&
+      rvm use 3.0.3 &&
+      rvm rubygems --force latest &&
+      rvm get stable --auto-dotfiles &&
+      eval $SHELL
+    command: rvm use 3.0.3
