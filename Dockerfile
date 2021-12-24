@@ -1,4 +1,4 @@
-FROM ruby:2.7-alpine
+FROM ruby:alpine
 
 # chroot to /app in the container.
 WORKDIR /app
@@ -13,14 +13,33 @@ RUN cat /etc/alpine-release
 RUN echo 'https://dl-cdn.alpinelinux.org/alpine/latest-stable/main' >> /etc/apk/repositories
 RUN echo 'https://dl-cdn.alpinelinux.org/alpine/latest-stable/community' >> /etc/apk/repositories
 
-RUN apk add --update --no-cache curl jq py3-configobj py3-pip py3-setuptools python3 python3-dev
-RUN apk add --update --no-cache nodejs postgresql-client curl nodejs gawk autoconf automake bison libffi-dev gbdm libncurses5-dev libsqlite3-dev libtool libyaml-dev pkg-config sqlite3 zlib1g-dev libgmp-dev libreadline-dev libssl-dev
+# Developers love these tools.
+RUN apk add --update --no-cache curl wget jq htop
+
+# SQLite3 requires Python3 to work.
+RUN apk add --update --no-cache py3-configobj py3-pip py3-setuptools \
+    python3 python3-dev
+RUN apk add --update --no-cache nodejs postgresql-client curl nodejs ruby
+
+# Add build tools.
+# RUN apk add --update --no-cache gawk autoconf automake bison libffi-dev gbdm \
+#     libncurses5-dev libtool libyaml-dev \
+#     pkg-config zlib1g-dev libgmp-dev libreadline-dev libssl-dev
+
+# Mimetypes are required to build railties-6.1.0
+RUN apk add --update --no-cache shared-mime-info
+
+RUN apk add --update --no-cache gawk autoconf automake bison \
+    libffi-dev libtool make gcc libc-dev
+
+# SQLite 3 is useful for testing apps in RAM and/or with SQLite flat file structure.
+RUN apk add --update --no-cache sqlite
 
 # Debug...
-RUN ruby -v
+RUN make -v && ruby -v
 
 # Install rails.
-RUN gem install rails -v 6.1.0
+RUN gem install rails
 
 # Install Bundler fixed to 2.2.1
 # Apparently it can mimick projects that need bundler v1.
