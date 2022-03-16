@@ -1,4 +1,4 @@
-FROM ruby:2.7-buster
+FROM ruby:3.1.1-buster
 
 # chroot to /app in the container.
 WORKDIR /app
@@ -37,7 +37,7 @@ RUN apt-get install -y nano \
     wget
 
 # Install rails.
-RUN gem install rails -v 6.1.0
+RUN gem install rails -v 7.0.2.3
 
 # Debug...
 RUN ruby -v
