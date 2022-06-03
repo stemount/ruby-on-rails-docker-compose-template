@@ -1,4 +1,4 @@
-FROM ruby:2.7-buster
+FROM ruby:buster
 
 # chroot to /app in the container.
 WORKDIR /app
@@ -37,7 +37,7 @@ RUN apt-get install -y nano \
     wget
 
 # Install rails.
-RUN gem install rails -v 6.1.0
+RUN gem install rails -v 7
 
 # Debug...
 RUN ruby -v
@@ -45,7 +45,7 @@ RUN ruby -v
 # Install Bundler fixed to 2.2.1
 # Apparently it can mimick projects that need bundler v1.
 # @see https://bundler.io/blog/2019/01/04/an-update-on-the-bundler-2-release.html
-RUN gem install bundler:2.2.1
+RUN gem install bundler
 
 # Install from Gemfile.
 RUN bundle install
