@@ -15,19 +15,22 @@
 # gem 'pg'
 #
 default: &default
-  adapter: postgresql
+  adapter: <%= ENV.fetch("DB_HOSTNAME") { "postgresql" } %>
   encoding: unicode
   # For details on connection pooling, see Rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
-  # The password associated with the postgres role (username).
-  password: password
+  # The usernanme associated with the postgres role (username).
+  username: <%= ENV.fetch("DB_USERNAME") { "root" } %>
+
+  # The password associated with the postgres role (password).
+  password: <%= ENV.fetch("DB_PASSWORD") { "password" } %>
 
   # Connect on a TCP socket. Omitted by default since the client uses a
   # domain socket that doesn't need configuration. Windows does not have
   # domain sockets, so uncomment these lines.
-  host: postgres
+  host: <%= ENV.fetch("DB_HOSTNAME") { "postgres" } %>
 
   # The TCP port the server listens on. Defaults to 5432.
   # If your server runs on a different port number, change accordingly.
@@ -64,7 +67,4 @@ test:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
 production:
-  <<: *default
-  database: app_production
-  username: app
-  password: <%= ENV['APP_DATABASE_PASSWORD'] %>
+  url: <%= ENV['DATABASE_URL'] %>

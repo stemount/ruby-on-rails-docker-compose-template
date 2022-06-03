@@ -1,20 +1,39 @@
 version: "3.9"
+
+volumes:
+  postgres:
+
 services:
   postgres:
     image: postgres:alpine
     ports:
       - 5432:5432
     volumes:
-      - ./tmp/db:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
     environment:
+      LOCALE: Europe/London
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+      PG_DATA: /var/lib/postgres/data/data
   web:
+    tty: true
     build: .
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
-      - .:/app
+      - .:/app:cached
     ports:
       - "3000:3000"
     depends_on:
       - postgres
+    environment:
+      # Docker in Dev
+      DB_DRIVER: postgresql
+      DB_USER: root
+      DB_PASSWORD: password
+      # Docker to Production (Heroku prefer to use this)
+      DATABASE_URL: "postgresql://root:password@postgres/app_production"
+      # Optimise Base Image
+      BASE_LINUX_IMAGE: 3-buster
+      # Node.js is required as Sass is preferred to be installed here over the Sass rubygem.
+      INSTALL_NODE: "false"
