@@ -1,8 +1,6 @@
 ARG BASE_LINUX_IMAGE=3-buster
 FROM ruby:${BASE_LINUX_IMAGE}
 
-SHELL [ "/bin/bash", "-l", "-c" ]
-
 WORKDIR /app
 
 # # We need the Gemfile quite early.
@@ -50,6 +48,18 @@ RUN if [ ${INSTALL_NODE} = true ]; then \
     ;fi
 
 # Install/Update from Gemfile.
+# Install rails.
+RUN gem install rails -v 7
+
+# Debug...
+RUN ruby -v
+
+# Install Bundler fixed to 2.2.1
+# Apparently it can mimick projects that need bundler v1.
+# @see https://bundler.io/blog/2019/01/04/an-update-on-the-bundler-2-release.html
+RUN gem install bundler
+
+# Install from Gemfile.
 RUN bundle install
 
 # # Copy the project files to /app in the container.
