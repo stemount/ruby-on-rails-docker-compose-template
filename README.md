@@ -67,3 +67,8 @@ It is recommended to have seed data to test your models too.
 ###### Default settings
 
 **PostgreSQL User**: `root` **PostgreSQL Password**: `password`
+
+
+### Infrastructure model
+
+![Infrastructure model](.infragenie/infrastructure_model.png)
